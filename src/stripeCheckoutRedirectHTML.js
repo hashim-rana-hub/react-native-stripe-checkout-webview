@@ -3,37 +3,39 @@
 /**
  * Generates HTML content that redirects to a Stripe checkout session
  */
+
+
 const stripeCheckoutRedirectHTML = (
   stripe_public_key: string,
   input:
     | {
-        sessionId: string,
-        successUrl: string,
-        cancelUrl: string,
-        // common
-        customerEmail?: string,
-        billingAddressCollection?: 'required' | 'auto',
-        shippingAddressCollection?: {
-          allowedCountries: Array<string>,
-        },
-        locale?: string,
-      }
-    | {
-        clientReferenceId: string,
-        successUrl: string,
-        cancelUrl: string,
-        items?: Array<{ plan: string, quantity: string }>,
-        lineItems?: Array<{ price: number, quantity: number }>,
-        mode?: 'payment' | 'subscription',
-        submitType?: string,
-        // common
-        customerEmail?: string,
-        billingAddressCollection?: 'required' | 'auto',
-        shippingAddressCollection?: {
-          allowedCountries: Array<string>,
-        },
-        locale?: string,
+      sessionId: string,
+      successUrl: string,
+      cancelUrl: string,
+      // common
+      customerEmail?: string,
+      billingAddressCollection?: 'required' | 'auto',
+      shippingAddressCollection?: {
+        allowedCountries: Array<string>,
       },
+      locale?: string,
+    }
+    | {
+      clientReferenceId: string,
+      successUrl: string,
+      cancelUrl: string,
+      items?: Array<{ plan: string, quantity: string }>,
+      lineItems?: Array<{ price: number, quantity: number }>,
+      mode?: 'payment' | 'subscription',
+      submitType?: string,
+      // common
+      customerEmail?: string,
+      billingAddressCollection?: 'required' | 'auto',
+      shippingAddressCollection?: {
+        allowedCountries: Array<string>,
+      },
+      locale?: string,
+    },
   options?: {
     /** The loading item is set on the element with id='sc-loading' */
     htmlContentLoading?: string,
@@ -52,7 +54,24 @@ const stripeCheckoutRedirectHTML = (
 
   /** Get options or defaults */
   const {
-    htmlContentLoading = '<h1 id="sc-loading">Loading...</h1>',
+    // htmlContentLoading = '<div id="sc-loading" style="">Loading...</div>',
+    htmlContentLoading = `
+    <div id="sc-loading" style="
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid #000;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    "></div>
+
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+`,
     htmlContentError = '<div id="sc-error-message"></div>',
     htmlContentHead = '',
   } = options || {};
@@ -69,7 +88,9 @@ const stripeCheckoutRedirectHTML = (
     </head>
     <body>
       <!-- Display loading content -->
+      <div style="display:flex; justify-content:center;align-items:center; height:100%">
       ${htmlContentLoading || ''}
+      </div>
       <!-- Display error content -->
       ${htmlContentError || ''}
       <!-- Exec JS without blocking dom -->      
